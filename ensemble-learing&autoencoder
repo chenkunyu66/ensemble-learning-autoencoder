@@ -65,3 +65,5 @@ glm_testy = as.matrix(testing_data[,1])
 
 all_in_one = cbind(testing_data$y, rf_predict, keras_predict)
 glm_temp = as.data.frame(all_in_one
+
+
