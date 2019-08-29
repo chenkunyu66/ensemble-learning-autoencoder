@@ -64,6 +64,52 @@ glm_testtemp = testing_data[,2:234]
 glm_testy = as.matrix(testing_data[,1])
 
 all_in_one = cbind(testing_data$y, rf_predict, keras_predict)
-glm_temp = as.data.frame(all_in_one
+glm_temp = as.data.frame(all_in_one)
+names(glm_temp)= c("y", "RF", "Keras")
+#glm_temp$y = ifelse(glm_temp$y == 2,1,0)
+glm_tempy = glm_temp[,1]
+glm_tempy = as.data.frame(glm_tempy)
+glm_temp = as.matrix(glm_temp)
+glm_model<-glm(y~.,family = binomial(link = logit), data = training_data )
+summary(glm_model)
+#glm_temp$y = as.matrix(glm_temp$y)
+glmpredict = predict(glm_model, glm_testtemp)
+glmprediction = prediction(glmpredict, glm_testy)
+glm_auc <- performance(glmprediction, 'auc')
+glm_auc@y.values
+
+
+
+auto.train.x = as.matrix(training_data[,2:234])
+auto.test.x = as.matrix(testing_data[,2:234])
+input_layer = layer_input(shape = c(234))
+encoder <- 
+  layer %>% 
+  layer_dense(units = 500, activation = "relu") %>% 
+  layer_batch_normalization() %>% 
+  layer_dropout(rate = 0.2) %>% 
+  layer_dense(units = 300, activation = "relu") %>%
+  layer_dropout(rate = 0.2) %>%
+  layer_dense(units = 150, activation = "relu") %>%
+  layer_dense(units = 100)
+
+decoder <- 
+  encoder %>% 
+  layer_dense(units = 150, activation = "relu") %>% 
+  layer_dropout(rate = 0.2) %>% 
+  layer_dense(units = 300, activation = "relu") %>%
+  layer_dropout(rate = 0.2) %>%
+  layer_dense(units = 500, activation = "relu") %>%
+  layer_dense(units = 1000)
+
+autoencoder.model <- keras_model(layer)
+
+autoencoder.model <- keras_model(inputs = input_layer, outputs = decoder)
+
+# autoencoder.model %>% compile(
+#   loss='mean_squared_error',
+#   optimizer='adam',
+#   metrics = c('accuracy')
+# )
 
 
