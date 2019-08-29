@@ -102,9 +102,6 @@ decoder <-
   layer_dense(units = 500, activation = "relu") %>%
   layer_dense(units = 1000)
 
-autoencoder.model <- keras_model(layer)
-
-autoencoder.model <- keras_model(inputs = input_layer, outputs = decoder)
 
 
 
