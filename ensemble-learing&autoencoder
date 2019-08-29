@@ -106,10 +106,6 @@ autoencoder.model <- keras_model(layer)
 
 autoencoder.model <- keras_model(inputs = input_layer, outputs = decoder)
 
-# autoencoder.model %>% compile(
-#   loss='mean_squared_error',
-#   optimizer='adam',
-#   metrics = c('accuracy')
-# )
+
 
 
