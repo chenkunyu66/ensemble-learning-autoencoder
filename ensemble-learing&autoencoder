@@ -93,15 +93,6 @@ encoder <-
   layer_dense(units = 150, activation = "relu") %>%
   layer_dense(units = 100)
 
-decoder <- 
-  encoder %>% 
-  layer_dense(units = 150, activation = "relu") %>% 
-  layer_dropout(rate = 0.2) %>% 
-  layer_dense(units = 300, activation = "relu") %>%
-  layer_dropout(rate = 0.2) %>%
-  layer_dense(units = 500, activation = "relu") %>%
-  layer_dense(units = 1000)
-
 
 
 
