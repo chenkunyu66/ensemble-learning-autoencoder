@@ -1,0 +1,67 @@
+set.seed(2019)
+index<-sample(1:dim(dt)[1],0.7*dim(dt)[1])
+training_data<-dt[index,]
+testing_data<-dt[-index,]
+
+training_data[is.na(training_data)] <- 0
+testing_data[is.na(testing_data)] <- 0
+
+
+#RF
+rf_traintemp = as.matrix(training_data[,2:234])
+rf_trainy = as.matrix(training_data[,1])
+rf_testtemp = as.matrix(testing_data[,2:234])
+rf_testy = as.matrix(testing_data[,1])
+
+mymodel <- randomForest(rf_traintemp,rf_trainy,ntree=500,importance = TRUE,proximity = TRUE)
+print(mymodel)
+
+rf_predict <- predict(mymodel, rf_testtemp)
+rf_prediction = prediction(rf_predict, rf_testy)
+rf_auc = performance(rf_prediction, 'auc')
+rf_auc@y.values
+
+#SVM
+
+svm_traintemp = as.matrix(training_data[,2:234])
+svm_trainy = as.matrix(training_data[,1])
+
+svm_testtemp = as.matrix(testing_data[,2:234])
+svm_testy = as.matrix(testing_data[,2])
+
+svm_model <- svm(y~., svm_trainy,type="C-classification", kernel = 'radial')
+print(svm_model)
+svm_predict<-predict(svm_model, svm_testtemp)
+svm_prediction<-prediction(svm_predict,svm_testy)
+svm_auc<- performance(svm_prediction, 'auc')
+svm_auc@y.values
+
+#keras
+keras_traintemp = as.matrix(training_data[,2:234])
+keras_trainy = as.matrix(training_data[,1])
+keras_testtemp = as.matrix(testing_data[,2:234])
+keras_testy = as.matrix(testing_data[,1])
+
+keras_model <- keras_model_sequential() 
+keras_model %>% 
+  layer_dense(units = 64, activation = 'relu', input_shape = c(234)) %>%
+  layer_dropout(rate = 0.01) %>% 
+  layer_dense(units = 32, activation = 'relu') %>%
+  layer_dropout(rate = 0.01) %>% 
+  layer_dense(units = 1, activation = 'sigmoid') %>% 
+  compile( 
+    optimizer = optimizer_rmsprop(),
+    loss = loss_binary_crossentropy,
+    metrics = c('accuracy')
+  )
+keras_test = as.matrix(testing_data)
+keras_predict <- predict(keras_model, keras_test)
+
+#glm
+glm_traintemp = as.matrix(training_data[,2:234])
+glm_trainy = as.matrix(training_data[,1])
+glm_testtemp = testing_data[,2:234]
+glm_testy = as.matrix(testing_data[,1])
+
+all_in_one = cbind(testing_data$y, rf_predict, keras_predict)
+glm_temp = as.data.frame(all_in_one
